@@ -174,7 +174,8 @@ static NSString *const DEFAULT_STARTING_PAGE = @"index.html";
     HCPUpdateRequest *request = [[HCPUpdateRequest alloc] init];
     request.configURL = options.configFileURL ? options.configFileURL : _pluginXmlConfig.configUrl;
     request.requestHeaders = options.requestHeaders;
-    request.currentWebVersion = _pluginInternalPrefs.currentReleaseVersionName;
+    request.currentWebVersion = _pluginInternalPrefs.currentReleaseVersionName; // modify by LiLian@zilenet.com
+    request.readyWebVersion = _pluginInternalPrefs.readyForInstallationReleaseVersionName; // modify by LiLian@zilenet.com
     request.currentNativeVersion = _pluginXmlConfig.nativeInterfaceVersion;
     
     NSError *error = nil;

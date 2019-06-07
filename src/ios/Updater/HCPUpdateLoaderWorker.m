@@ -21,6 +21,8 @@
     NSURL *_configURL;
     HCPFilesStructure *_pluginFiles;
     NSUInteger _nativeInterfaceVersion;
+    NSString *_currentVersion; // modify by LiLian@zilenet.com
+    NSString *_readyVersion; // modify by LiLian@zilenet.com
     
     id<HCPConfigFileStorage> _appConfigStorage;
     id<HCPConfigFileStorage> _manifestStorage;
@@ -47,6 +49,8 @@
         _configURL = [request.configURL copy];
         _requestHeaders = [request.requestHeaders copy];
         _nativeInterfaceVersion = request.currentNativeVersion;
+        _currentVersion = [request.currentWebVersion copy]; // modify by LiLian@zilenet.com
+        _readyVersion = [request.readyWebVersion copy]; // modify by LiLian@zilenet.com
         _workerId = [self generateWorkerId];
         _pluginFiles = [[HCPFilesStructure alloc] initWithReleaseVersion:request.currentWebVersion];
         _appConfigStorage = [[HCPApplicationConfigStorage alloc] initWithFileStructure:_pluginFiles];
@@ -84,7 +88,17 @@
         }
         
         // check if new version is available
-        if ([newAppConfig.contentConfig.releaseVersion isEqualToString:_oldAppConfig.contentConfig.releaseVersion]) {
+        // 这里修改判断：当前版本是否低于发行版本，以防止意外更新成旧版本（modify by LiLian@zilenet.com）
+        // if ([newAppConfig.contentConfig.releaseVersion compare:_oldAppConfig.contentConfig.releaseVersion] != NSOrderedDescending) {
+        if ([newAppConfig.contentConfig.releaseVersion compare:_currentVersion] != NSOrderedDescending) {
+            NSLog(@"CurrentVersion %@ and ReleaseVersion %@", _currentVersion, newAppConfig.contentConfig.releaseVersion);
+            [self notifyNothingToUpdate:newAppConfig];
+            return;
+        }
+
+        // 这里增加判断：发行版本是否高于待安装版本，以避免重复下载（modify by LiLian@zilenet.com）
+        if ([newAppConfig.contentConfig.releaseVersion compare:_readyVersion] != NSOrderedDescending) {
+            NSLog(@"ReadyVersion %@ and ReleaseVersion %@", _currentVersion, newAppConfig.contentConfig.releaseVersion);
             [self notifyNothingToUpdate:newAppConfig];
             return;
         }

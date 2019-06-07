@@ -14,6 +14,8 @@ import java.util.Map;
 public class UpdateDownloadRequest {
 
     private String configURL;
+    private String currentReleaseVersion;
+    private String readyReleaseVersion;
     private PluginFilesStructure currentReleaseFS;
     private int currentNativeVersion;
     private Map<String, String> requestHeaders;
@@ -24,17 +26,22 @@ public class UpdateDownloadRequest {
      * @param context               application context
      * @param configURL             chcp.json url
      * @param currentReleaseVersion current web content version
+     * @param readyReleaseVersion   ready web content version modify byLiLian@zilenet.com
      * @param currentNativeVersion  current native interface version
-     * @param requestHeaders        additional request headers, which will be added to all requests
+     * @param requestHeaders        additional request headers, which will be added
+     *                              to all requests
      */
     public UpdateDownloadRequest(final Context context,
                                  final String configURL,
                                  final String currentReleaseVersion,
+                                 final String readyReleaseVersion, // modify by LiLian@zilenet.com
                                  final int currentNativeVersion,
                                  final Map<String, String> requestHeaders) {
         this.configURL = configURL;
         this.currentNativeVersion = currentNativeVersion;
         this.requestHeaders = requestHeaders;
+        this.currentReleaseVersion = currentReleaseVersion; // modify by LiLian@zilenet.com
+        this.readyReleaseVersion = readyReleaseVersion; // modify by LiLian@zilenet.com
         this.currentReleaseFS = new PluginFilesStructure(context, currentReleaseVersion);
     }
 
@@ -76,6 +83,26 @@ public class UpdateDownloadRequest {
     }
 
     /**
+     * Current release version. 
+     * modify by LiLian@zilenet.com
+     *
+     * @return Current release version.
+     */
+    public String getCurrentReleaseVersion() {
+        return currentReleaseVersion;
+    }
+
+    /**
+     * Ready release version. 
+     * modify by LiLian@zilenet.com
+     * 
+     * @return Ready release version.
+     */
+    public String getReadyReleaseVersion() {
+        return readyReleaseVersion;
+    }
+
+    /**
      * Additional request headers.
      *
      * @return request headers
@@ -91,6 +118,7 @@ public class UpdateDownloadRequest {
         private Context mContext;
         private String configURL;
         private String currentReleaseVersion;
+        private String readyReleaseVersion; // modify by LiLian@zilenet.com
         private int currentNativeVersion;
         private Map<String, String> requestHeaders;
 
@@ -126,6 +154,18 @@ public class UpdateDownloadRequest {
         }
 
         /**
+         * Setter for ready web release version.
+         * modify by LiLian@zilenet.com
+         * 
+         * @param readyReleaseVersion version
+         * @return builder
+         */
+        public Builder setReadyReleaseVersion(final String readyReleaseVersion) {
+            this.readyReleaseVersion = readyReleaseVersion;
+            return this;
+        }
+
+        /**
          * Setter for additional request headers.
          *
          * @param requestHeaders request headers.
@@ -153,7 +193,8 @@ public class UpdateDownloadRequest {
          * @return update request instance
          */
         public UpdateDownloadRequest build() {
-            return new UpdateDownloadRequest(mContext, configURL, currentReleaseVersion, currentNativeVersion, requestHeaders);
+            // modify by LiLian@zilenet.com
+            return new UpdateDownloadRequest(mContext, configURL, currentReleaseVersion, readyReleaseVersion, currentNativeVersion, requestHeaders);
         }
     }
 

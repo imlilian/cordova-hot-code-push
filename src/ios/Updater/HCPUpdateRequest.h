@@ -19,6 +19,12 @@
 @property (nonatomic, strong) NSString *currentWebVersion;
 
 /**
+ *  Ready working version of the web content.
+ *  modify by LiLian@zilenet.com
+ */
+@property (nonatomic, strong) NSString *readyWebVersion;
+
+/**
  *  Current native version of the app.
  */
 @property (nonatomic) NSUInteger currentNativeVersion;

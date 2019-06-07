@@ -39,6 +39,8 @@ class UpdateLoaderWorker implements WorkerTask {
 
     private final String applicationConfigUrl;
     private final int appNativeVersion;
+    private final String currentReleaseVersion;
+    private final String readyReleaseVersion;
     private final PluginFilesStructure filesStructure;
     private final Map<String, String> requestHeaders;
 
@@ -58,6 +60,8 @@ class UpdateLoaderWorker implements WorkerTask {
     UpdateLoaderWorker(final UpdateDownloadRequest request) {
         applicationConfigUrl = request.getConfigURL();
         appNativeVersion = request.getCurrentNativeVersion();
+        currentReleaseVersion = request.getCurrentReleaseVersion();
+        readyReleaseVersion = request.getReadyReleaseVersion();
         filesStructure = request.getCurrentReleaseFileStructure();
         requestHeaders = request.getRequestHeaders();
     }
@@ -85,7 +89,17 @@ class UpdateLoaderWorker implements WorkerTask {
         }
 
         // check if there is a new content version available
-        if (newContentConfig.getReleaseVersion().equals(oldAppConfig.getContentConfig().getReleaseVersion())) {
+        // 这里修改判断：当前版本是否低于发行版本，以防止意外更新成旧版本（modify by LiLian@zilenet.com）
+        // if (newContentConfig.getReleaseVersion().equals(oldAppConfig.getContentConfig().getReleaseVersion())) {
+        if (newContentConfig.getReleaseVersion().compareTo(currentReleaseVersion) <= 0) {
+            Log.d("CHCP", "NewRleaseVersion:" + newContentConfig.getReleaseVersion());
+            setNothingToUpdateResult(newAppConfig);
+            return;
+        }
+
+        // 这里增加判断：当前待安装版本是否低于发行版本，以防止重复下载（modify by LiLian@zilenet.com）
+        if (newContentConfig.getReleaseVersion().compareTo(readyReleaseVersion) <= 0) {
+            Log.d("CHCP", "NewRleaseVersion:" + newContentConfig.getReleaseVersion());
             setNothingToUpdateResult(newAppConfig);
             return;
         }

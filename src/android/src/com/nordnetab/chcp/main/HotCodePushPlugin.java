@@ -494,10 +494,12 @@ public class HotCodePushPlugin extends CordovaPlugin {
             }
         }
 
+        // modify by LiLian@zilenet.com
         final UpdateDownloadRequest request = UpdateDownloadRequest.builder(cordova.getActivity())
                 .setConfigURL(configURL)
                 .setCurrentNativeVersion(chcpXmlConfig.getNativeInterfaceVersion())
                 .setCurrentReleaseVersion(pluginInternalPrefs.getCurrentReleaseVersionName())
+                .setReadyReleaseVersion(pluginInternalPrefs.getReadyForInstallationReleaseVersionName())
                 .setRequestHeaders(requestHeaders)
                 .build();
 
